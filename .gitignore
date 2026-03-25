@@ -29,3 +29,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+
+#그냥
+index2.html
