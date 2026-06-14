@@ -98,6 +98,11 @@
       scrollHeight: 0,
       objs: {
         container: document.querySelector("#scroll-section-3"),
+        canvasCaption: document.querySelector(".canvas-caption"),
+        canvas: document.querySelector(".image-blend-canvas"),
+        context: document.querySelector(".image-blend-canvas").getContext("2d"),
+        imagePath: ["./image/blend-image-1.jpg", "./image/blend-image-2.jpg"],
+        images: [],
       },
     },
   ];
@@ -116,9 +121,14 @@
       imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`;
       sceneInfo[2].objs.videoImages.push(imgElem2);
     }
+
+    for (let i = 0; i < sceneInfo[3].objs.imagePath.length; i++) {
+      const imgElem3 = new Image();
+      imgElem3.src = sceneInfo[3].objs.imagePath[i];
+      sceneInfo[3].objs.images.push(imgElem3);
+    }
   }
   setCanvasImages();
-
   function setLayout() {
     //각 스크롤 세션의 높이 세팅
     for (let i = 0; i < sceneInfo.length; i++) {
@@ -227,13 +237,12 @@
       case 2:
         let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
         objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
-        if(scrollRatio <=0.5){
-          objs.canvas.style.opacity = calcValues(values.canvas_opacity_in,currentYOffset);
-        }else{
-          objs.canvas.style.opacity = calcValues(values.canvas_opacity_out,currentYOffset);
-
+        if (scrollRatio <= 0.5) {
+          objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYOffset);
+        } else {
+          objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYOffset);
         }
-        
+
         if (scrollRatio <= 0.25) {
           // in
           objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYOffset);
@@ -270,7 +279,21 @@
 
         break;
       case 3:
-        console.log();
+        //가로, 세로 모두 꽉 차게 하기 위해 여기서 세팅(계산 필요)
+        const widthRatio = window.innerWidth / objs.canvas.width;
+        const heightRatio = window.innerHeight / objs.canvas.height;
+        let canvasScaleRatio;
+
+        if (widthRatio <= heightRatio) {
+          //캔버스보다 브라우저 창이 홀쭉한 경우
+          canvasScaleRatio = heightRatio;
+        } else {
+          //캔버스보다 브라우저 창이 납작한 경우
+          canvasScaleRatio = widthRatio;
+        }
+
+        objs.canvas.style.transform = `scale(${canvasScaleRatio})`;
+        objs.context.drawImage(objs.images[0], 0, 0);
         break;
     }
   }
